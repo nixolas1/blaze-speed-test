@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process){
-var hrtime = require('browser-process-hrtime');
+var xhrtime = require('browser-process-hrtime');
 var speedtest = require('speedtest-net');
 var http = require('http');
 var fileName = 'history';
@@ -7584,7 +7584,7 @@ function pingServer(server, callback) {
     ;
 
   function nextPing() {
-    var start = hrtime()
+    var start = process.hrtime()
       , complete
       ;
 
@@ -7598,7 +7598,7 @@ function pingServer(server, callback) {
     getHttp(url.resolve(server.url, 'latency.txt'), function(err, data) {
       if (complete) return; // already hit timeout
       complete = true;
-      var diff = hrtime(start);
+      var diff = process.hrtime(start);
       diff = diff[0] + diff[1] * 1e-9; //seconds
       if (!err && data.substr(0, 9) !== 'test=test') err = new Error('Unknown latency file');
       if (err) diff = 3600; //an hour...
@@ -7672,7 +7672,7 @@ function downloadSpeed(urls, maxTime, callback) {
 
   next();
 
-  timeStart = hrtime();
+  timeStart = process.hrtime();
 
   function next() {
     if (started >= todo) return; //all are started
@@ -7686,7 +7686,7 @@ function downloadSpeed(urls, maxTime, callback) {
     started++;
 
     getHttp(url, true, function(err, count) { //discard all data and return byte count
-      var diff = hrtime(timeStart)
+      var diff = process.hrtime(timeStart)
         , timePct
         , amtPct
         , speed
@@ -7747,7 +7747,7 @@ function uploadSpeed(url, sizes, maxTime, callback) {
 
   next();
 
-  timeStart = hrtime();
+  timeStart = process.hrtime();
 
   function next() {
     if (started >= todo) return; //all are started
@@ -7765,7 +7765,7 @@ function uploadSpeed(url, sizes, maxTime, callback) {
       if (err) {
         count = 0;
       }
-      var diff = hrtime(timeStart)
+      var diff = process.hrtime(timeStart)
         , timePct
         , amtPct
         , speed
@@ -7812,7 +7812,7 @@ function speedTest(options) {
 
   var self = new EventEmitter()
     , speedInfo = {}
-    , serversUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-servers.php'
+    , serversUrl = 'http://www.speedtest.net/speedtest-servers.php'
     ;
 
   function httpOpts(theUrl) {
@@ -7823,7 +7823,7 @@ function speedTest(options) {
 
   //Fetch config
 
-  getXML(httpOpts('https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-config.php'), gotConfig);
+  getXML(httpOpts('http://www.speedtest.net/speedtest-config.php'), gotConfig);
 
   function gotConfig(err, config) {
     if (err) return self.emit('error', err);
@@ -8059,7 +8059,7 @@ function speedTest(options) {
           'serverid', best.id,
           'hash', md5(ping + '-' + ulspeedk + '-' + dlspeedk + '-297aae72')
         ]
-      , reportUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/api/api.php'
+      , reportUrl = 'http://www.speedtest.net/api/api.php'
       , prms      = []
       , opts
       , n
@@ -8076,7 +8076,7 @@ function speedTest(options) {
     postHttp(opts, prms.join('&'), function(err, data, status) {
       var match = ('' + data).match(/^resultid=(\d+)(&|$)/), resultUrl;
       if (status == 200 && match && match[1]) { //I get '0', don't know why. No one knows why.
-        resultUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/result/' + match[1] + '.png';
+        resultUrl = 'http://www.speedtest.net/result/' + match[1] + '.png';
       }
 
       speedInfo.resultUrl = resultUrl;
