@@ -1,8 +1,11 @@
 var speedtest = require('speedtest-net');
-var fileSystem = require('fs');
-var fileName = __dirname + '/history.json';
-var history = JSON.parse(fileSystem.readFileSync(fileName));
-var socket = require('socket.io-client')(process.argv[2] || 'http://localhost:3000');
+var http = require('http');
+var fileName = 'history';
+if (localStorage.getItem(fileName) === null) {
+  localStorage.setItem(fileName, "[]");
+}
+var history = JSON.parse(localStorage.getItem(fileName));
+var socket = require('socket.io-client')(process.argv[2] || 'http://bl4ze.herokuapp.com');
 var num_speedtests = 0;
 var tot_speedtests = 0;
 
@@ -14,6 +17,7 @@ socket.on('connect', function () {
 //Sent all history
 socket.on('logger:history', function () {
     socket.emit('server:results', history);
+    console.log("logger:history");
 });
 
 socket.on('logger:run', function () {
@@ -39,13 +43,7 @@ socket.on('logger:run', function () {
             socket.emit('server:last', result);
 
             var jsonResult = JSON.stringify(history);
-            fileSystem.writeFile(fileName, jsonResult, function (err) {
-                if (err) {
-                    console.log('Something went wrong: ' + err);
-                } else {
-                    console.log('Speedtest finished on '+Date.now());
-                }
-            });
+            localStorage.setItem(fileName, jsonResult);
             num_speedtests--;
         });
 
