@@ -7584,7 +7584,7 @@ function pingServer(server, callback) {
     ;
 
   function nextPing() {
-    var start = process.hrtime()
+    var start = hrtime()
       , complete
       ;
 
@@ -7598,7 +7598,7 @@ function pingServer(server, callback) {
     getHttp(url.resolve(server.url, 'latency.txt'), function(err, data) {
       if (complete) return; // already hit timeout
       complete = true;
-      var diff = process.hrtime(start);
+      var diff = hrtime(start);
       diff = diff[0] + diff[1] * 1e-9; //seconds
       if (!err && data.substr(0, 9) !== 'test=test') err = new Error('Unknown latency file');
       if (err) diff = 3600; //an hour...
@@ -7672,7 +7672,7 @@ function downloadSpeed(urls, maxTime, callback) {
 
   next();
 
-  timeStart = process.hrtime();
+  timeStart = hrtime();
 
   function next() {
     if (started >= todo) return; //all are started
@@ -7686,7 +7686,7 @@ function downloadSpeed(urls, maxTime, callback) {
     started++;
 
     getHttp(url, true, function(err, count) { //discard all data and return byte count
-      var diff = process.hrtime(timeStart)
+      var diff = hrtime(timeStart)
         , timePct
         , amtPct
         , speed
@@ -7747,7 +7747,7 @@ function uploadSpeed(url, sizes, maxTime, callback) {
 
   next();
 
-  timeStart = process.hrtime();
+  timeStart = hrtime();
 
   function next() {
     if (started >= todo) return; //all are started
@@ -7765,7 +7765,7 @@ function uploadSpeed(url, sizes, maxTime, callback) {
       if (err) {
         count = 0;
       }
-      var diff = process.hrtime(timeStart)
+      var diff = hrtime(timeStart)
         , timePct
         , amtPct
         , speed
