@@ -1,4 +1,4 @@
-var hrtime = require('browser-process-hrtime');
+//var hrtime = require('browser-process-hrtime');
 var speedtest = require('speedtest-net');
 var http = require('http');
 var fileName = 'history';
