@@ -7,7 +7,7 @@ if (localStorage.getItem(fileName) === null) {
   localStorage.setItem(fileName, "[]");
 }
 var history = JSON.parse(localStorage.getItem(fileName));
-var socket = require('socket.io-client')(process.argv[2] || 'http://localhost:3000');
+var socket = require('socket.io-client')(process.argv[2] || 'http://bl4ze.herokuapp.com');
 var num_speedtests = 0;
 var tot_speedtests = 0;
 
