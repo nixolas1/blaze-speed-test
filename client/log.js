@@ -7780,7 +7780,7 @@ function speedTest(options) {
 
   var self = new EventEmitter()
     , speedInfo = {}
-    , serversUrl = 'http://www.speedtest.net/speedtest-servers.php'
+    , serversUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-servers.php'
     ;
 
   function httpOpts(theUrl) {
@@ -7791,7 +7791,7 @@ function speedTest(options) {
 
   //Fetch config
 
-  getXML(httpOpts('http://www.speedtest.net/speedtest-config.php'), gotConfig);
+  getXML(httpOpts('https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-config.php'), gotConfig);
 
   function gotConfig(err, config) {
     if (err) return self.emit('error', err);
