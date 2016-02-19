@@ -8,7 +8,7 @@ if (localStorage.getItem(fileName) === null) {
   localStorage.setItem(fileName, "[]");
 }
 var history = JSON.parse(localStorage.getItem(fileName));
-var socket = require('socket.io-client')(process.argv[2] || 'http://bl4ze.herokuapp.com');
+var socket = require('socket.io-client')(process.argv[2] || window.location.origin);
 var num_speedtests = 0;
 var tot_speedtests = 0;
 
@@ -7397,6 +7397,8 @@ function getHttp(theUrl, discard, callback) {
   options.headers = options.headers || {};
   options.headers['user-agent'] = options.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 
+  options.withCredentials = false;
+  console.log("opt", options)
   http.get(options, function(res) {
     var data = ''
       , count = 0
@@ -7441,6 +7443,7 @@ function postHttp(theUrl, data, callback) {
   http = require(options.protocol == 'https:' ? 'https' : 'http');
   delete options.protocol;
 
+  options.withCredentials = false;
   req = http.request(options, function(res) {
     var data = '';
     res.setEncoding('utf8');
@@ -7486,6 +7489,7 @@ function randomPutHttp(theUrl, size, callback) {
 
   options.method = 'POST';
 
+
   dataBlock = (function() {
     var d = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     while (d.length < 1024 * 16) d += d;
@@ -7496,6 +7500,7 @@ function randomPutHttp(theUrl, size, callback) {
 
   delete options.protocol;
 
+  options.withCredentials = false;
   var req = http.request(options, function(res) {
     var data = '';
     res.on('error', callback);
@@ -7545,7 +7550,7 @@ function getXML(xmlurl, callback) {
 }
 
 // polyfil for window.performance.now
-var performance = global.performance || {}
+var performance = process.performance || {}
 var performanceNow =
   performance.now        ||
   performance.mozNow     ||
@@ -7808,7 +7813,7 @@ function speedTest(options) {
 
   var self = new EventEmitter()
     , speedInfo = {}
-    , serversUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-servers.php'
+    , serversUrl = 'http://www.speedtest.net/speedtest-servers.php'
     ;
 
   function httpOpts(theUrl) {
@@ -7819,7 +7824,7 @@ function speedTest(options) {
 
   //Fetch config
 
-  getXML(httpOpts('https://cors-anywhere.herokuapp.com/http://www.speedtest.net/speedtest-config.php'), gotConfig);
+  getXML(httpOpts('http://www.speedtest.net/speedtest-config.php'), gotConfig);
 
   function gotConfig(err, config) {
     if (err) return self.emit('error', err);
@@ -8055,7 +8060,7 @@ function speedTest(options) {
           'serverid', best.id,
           'hash', md5(ping + '-' + ulspeedk + '-' + dlspeedk + '-297aae72')
         ]
-      , reportUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/api/api.php'
+      , reportUrl = 'http://www.speedtest.net/api/api.php'
       , prms      = []
       , opts
       , n
@@ -8072,7 +8077,7 @@ function speedTest(options) {
     postHttp(opts, prms.join('&'), function(err, data, status) {
       var match = ('' + data).match(/^resultid=(\d+)(&|$)/), resultUrl;
       if (status == 200 && match && match[1]) { //I get '0', don't know why. No one knows why.
-        resultUrl = 'https://cors-anywhere.herokuapp.com/http://www.speedtest.net/result/' + match[1] + '.png';
+        resultUrl = 'http://www.speedtest.net/result/' + match[1] + '.png';
       }
 
       speedInfo.resultUrl = resultUrl;
