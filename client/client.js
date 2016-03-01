@@ -8,7 +8,7 @@ var max_ul = 0;
 var min_ping = 999999;
 var first = true;
 
-var max_display_len = 500;
+var max_display_len = 20;
 var point_threshold = 500;
 var anim_duration = 2000;
 
