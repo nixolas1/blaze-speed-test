@@ -3,26 +3,34 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
-var interval = process.env.TIME_INTERVAL || 20000;
+var interval = process.env.TIME_INTERVAL || 5000;
 var history = [];
 
+
+function rand(max){
+    return Math.random()*max;
+}
+
+function randData(){
+    return {
+        download: rand(100),
+        upload: rand(80),
+        ping: rand(300),
+        date: Date.now()
+    };
+}
+
+
 io.on('connect', function (socket) {
-    console.log('Looksies! We got ourselves a user!');
-    io.emit('logger:history');
-
-    socket.on('server:results', function (data) {
-        console.log("server:results");
-        io.emit('client:display', data);
-    });
-
-    socket.on('server:last', function (data) {
-        console.log("server:last");
-        io.emit('client:update', data);
-    });
+    var data = randData();
+    io.emit('client:display', data);
 });
 
 setInterval(function () {
-    io.emit('logger:run');
+    var result = randData();
+
+    history.push(result);
+    io.emit('client:update', result);
 }, interval);
 
 app.use('/', express.static('client'));
